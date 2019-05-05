@@ -1,0 +1,30 @@
+# Makefile for the Offline NT Password Editor
+CC=gcc
+
+# Force 64 bit
+CFLAGS= -Os -g -I. -Wall -m64 -fno-aggressive-loop-optimizations -Wno-maybe-uninitialized
+OSSLLIB=$(OSSLPATH)/lib
+
+all: chntpw reged samusrgrp sampasswd
+
+chntpw: chntpw.o ntreg.o edlib.o libsam.o
+	$(CC) $(CFLAGS) -o chntpw chntpw.o ntreg.o edlib.o libsam.o
+	strip -s chntpw.exe
+
+reged: reged.o ntreg.o edlib.o
+	$(CC) $(CFLAGS) -o reged reged.o ntreg.o edlib.o
+	strip -s reged.exe
+
+samusrgrp: samusrgrp.o ntreg.o libsam.o
+	$(CC) $(CFLAGS) -o samusrgrp samusrgrp.o ntreg.o libsam.o
+	strip -s samusrgrp.exe
+
+sampasswd: sampasswd.o ntreg.o libsam.o
+	$(CC) $(CFLAGS) -o sampasswd sampasswd.o ntreg.o libsam.o
+	strip -s sampasswd.exe
+
+.c.o:
+	$(CC) -c $(CFLAGS) $<
+
+clean:
+	del *.o chntpw.exe reged.exe samusrgrp.exe sampasswd.exe *~
